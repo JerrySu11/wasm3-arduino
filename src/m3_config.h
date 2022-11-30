@@ -61,6 +61,7 @@
 #   define d_m3Use32BitSlots                    1
 # endif
 
+# define d_m3ProfilerSlotMask 0x1000
 # ifndef d_m3ProfilerSlotMask
 #   define d_m3ProfilerSlotMask                 0xFFFF
 # endif
@@ -75,7 +76,6 @@
 
 
 // profiling and tracing ------------------------------------------------------
-
 # ifndef d_m3EnableOpProfiling
 #   define d_m3EnableOpProfiling                0       // opcode usage counters
 # endif

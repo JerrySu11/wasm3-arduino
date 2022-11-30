@@ -509,7 +509,7 @@ _           (ReadLEB_u32 (& numElements, & bytes, end));
                 u32 functionIndex;
 _               (ReadLEB_u32 (& functionIndex, & bytes, end));
                 _throwif ("function index out of range", functionIndex >= io_module->numFunctions);
-                IM3Function function = & io_module->functions [functionIndex];      d_m3Assert (function); //printf ("table: %s\n", m3_GetFunctionName(function));
+                IM3Function function = & io_module->functions [functionIndex];      d_m3Assert (function); //arduino_printf ("table: %s\n", m3_GetFunctionName(function));
                 io_module->table0 [e + offset] = function;
             }
         }

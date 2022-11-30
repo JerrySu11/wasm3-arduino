@@ -52,7 +52,7 @@ void *  m3_Malloc  (size_t i_size)
     memset (ptr, 0x0, i_size);
     fixedHeapLast = ptr;
 
-    //printf("== alloc %d => %p\n", i_size, ptr);
+    //arduino_printf("== alloc %d => %p\n", i_size, ptr);
 
     return ptr;
 }
@@ -63,15 +63,15 @@ void  m3_FreeImpl  (void * i_ptr)
     if (i_ptr && i_ptr == fixedHeapLast) {
         fixedHeapPtr = fixedHeapLast;
         fixedHeapLast = NULL;
-        //printf("== free %p\n", io_ptr);
+        //arduino_printf("== free %p\n", io_ptr);
     } else {
-        //printf("== free %p [failed]\n", io_ptr);
+        //arduino_printf("== free %p [failed]\n", io_ptr);
     }
 }
 
 void *  m3_Realloc  (void * i_ptr, size_t i_newSize, size_t i_oldSize)
 {
-    //printf("== realloc %p => %d\n", io_ptr, i_newSize);
+    //arduino_printf("== realloc %p => %d\n", io_ptr, i_newSize);
 
     if (UNLIKELY(i_newSize == i_oldSize)) return i_ptr;
 
@@ -109,14 +109,14 @@ void *  m3_Malloc  (size_t i_size)
 {
     void * ptr = calloc (i_size, 1);
 
-//    printf("== alloc %d => %p\n", (u32) i_size, ptr);
+    // arduino_printf("== alloc %d => %p\n", (u32) i_size, ptr);
 
     return ptr;
 }
 
 void  m3_FreeImpl  (void * io_ptr)
 {
-//    if (io_ptr) printf("== free %p\n", io_ptr);
+//    if (io_ptr) arduino_printf("== free %p\n", io_ptr);
     free (io_ptr);
 }
 
@@ -169,7 +169,7 @@ void        m3StackCheck ()
     stack_end = M3_MIN (stack_end, addr);
 
 //    if (stackEnd != stack_end)
-//        printf ("maxStack: %ld\n", m3StackGetMax ());
+//        arduino_printf ("maxStack: %ld\n", m3StackGetMax ());
 }
 
 int      m3StackGetMax  ()

@@ -232,7 +232,7 @@ _   (SuppressLookupFailure (m3_LinkRawFunction (module, env, "_memcpy",         
 _   (SuppressLookupFailure (m3_LinkRawFunction (module, env, "_abort",            "v()",     &m3_libc_abort)));
 _   (SuppressLookupFailure (m3_LinkRawFunction (module, env, "_exit",             "v(i)",    &m3_libc_exit)));
 _   (SuppressLookupFailure (m3_LinkRawFunction (module, env, "clock_ms",          "i()",     &m3_libc_clock_ms)));
-_   (SuppressLookupFailure (m3_LinkRawFunction (module, env, "printf",            "i(**)",   &m3_libc_printf)));
+_   (SuppressLookupFailure (m3_LinkRawFunction (module, env, "arduino_printf",            "i(**)",   &m3_libc_printf)));
 
 _catch:
     return result;

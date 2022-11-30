@@ -454,7 +454,7 @@ M3Result  Push  (IM3Compilation o, u8 i_type, u16 i_slot)
     }
 #endif
 
-    u16 stackIndex = o->stackIndex++;                                       // printf ("push: %d\n", (i32) i);
+    u16 stackIndex = o->stackIndex++;                                       // arduino_printf ("push: %d\n", (i32) i);
 
     if (stackIndex < d_m3MaxFunctionStackHeight)
     {
@@ -492,7 +492,7 @@ M3Result  Pop  (IM3Compilation o)
 
     if (o->stackIndex > o->block.blockStackIndex)
     {
-        o->stackIndex--;                                                //  printf ("pop: %d\n", (i32) o->stackIndex);
+        o->stackIndex--;                                                //  arduino_printf ("pop: %d\n", (i32) o->stackIndex);
 
         u16 slot = o->wasmStack [o->stackIndex];
         u8 type = o->typeStack [o->stackIndex];
@@ -543,7 +543,7 @@ _   (Push (o, i_type, slot));
     if (i_doEmit)
         EmitSlotOffset (o, slot);
 
-//    printf ("push: %d\n", (u32) slot);
+//    arduino_printf ("push: %d\n", (u32) slot);
 
     _catch: return result;
 }
@@ -1115,7 +1115,7 @@ _   (Read_u8 (& opcode, & o->wasm, o->wasmEnd));             m3log (compile, d_i
 
     i_opcode = (i_opcode << 8) | opcode;
 
-    //printf("Extended opcode: 0x%x\n", i_opcode);
+    //arduino_printf("Extended opcode: 0x%x\n", i_opcode);
 
     IM3OpInfo opInfo = GetOpInfo (i_opcode);
     _throwif (m3Err_unknownOpcode, not opInfo);
@@ -1200,7 +1200,7 @@ M3Result  Compile_SetLocal  (IM3Compilation o, m3opcode_t i_opcode)
     M3Result result;
 
     u32 localIndex;
-_   (ReadLEB_u32 (& localIndex, & o->wasm, o->wasmEnd));             //  printf ("--- set local: %d \n", localSlot);
+_   (ReadLEB_u32 (& localIndex, & o->wasm, o->wasmEnd));             //  arduino_printf ("--- set local: %d \n", localSlot);
 
     if (localIndex < GetFunctionNumArgsAndLocals (o->function))
     {

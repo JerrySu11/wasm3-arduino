@@ -122,7 +122,7 @@ void  Function_FreeCompiledCode (IM3Function i_function)
 
             if (--(page->info.usageCount) == 0)
             {
-//                printf ("free %p\n", page);
+//                arduino_printf ("free %p\n", page);
             }
         }
 

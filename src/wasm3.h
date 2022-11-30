@@ -13,6 +13,20 @@
 #define M3_VERSION_REV   0
 #define M3_VERSION       "0.5.0"
 
+// #define DEBUG
+// #define d_m3LogParse 1
+// #define d_m3LogModule 1
+// #define d_m3LogCompile 1
+// #define d_m3LogWasmStack 1
+// #define d_m3LogEmit 1
+// #define d_m3EnableOpProfiling 1
+// #define d_m3EnableOpTracing 1
+// #define d_m3EnableStrace 2
+
+// #define d_m3LogRuntime 1
+// #define d_m3LogCodePages 1
+// #define d_m3LogNativeStack 1
+
 #include <stdlib.h>
 #include <stdint.h>
 #include <inttypes.h>
@@ -312,6 +326,8 @@ d_m3ErrorConst  (trapStackOverflow,             "[trap] stack overflow")
 
     // The runtime owns the backtrace, do not free the backtrace you obtain. Returns NULL if there's no backtrace.
     IM3BacktraceInfo    m3_GetBacktrace             (IM3Runtime i_runtime);
+
+    extern int          arduino_printf              (const char*, ...);
 
 //-------------------------------------------------------------------------------------------------------------------------------
 //  raw function definition helpers

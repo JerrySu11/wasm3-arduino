@@ -72,11 +72,11 @@ d_m3BeginExternC
 #if d_m3EnableStrace == 1
     // Flat trace
     #define d_m3TracePrepare
-    #define d_m3TracePrint(fmt, ...)            fprintf(stderr, fmt "\n", ##__VA_ARGS__)
+    #define d_m3TracePrint(fmt, ...)            arduino_printf(fmt "\n", ##__VA_ARGS__)
 #elif d_m3EnableStrace >= 2
     // Structured trace
     #define d_m3TracePrepare                    const IM3Runtime trace_rt = m3MemRuntime(_mem);
-    #define d_m3TracePrint(fmt, ...)            fprintf(stderr, "%*s" fmt "\n", (trace_rt->callDepth)*2, "", ##__VA_ARGS__)
+    #define d_m3TracePrint(fmt, ...)            arduino_printf("%*s" fmt "\n", (trace_rt->callDepth)*2, "", ##__VA_ARGS__)
 #else
     #define d_m3TracePrepare
     #define d_m3TracePrint(fmt, ...)
@@ -493,7 +493,7 @@ d_m3ReinterpretOp (_fp0, f64, _r0, i64)
 d_m3Op  (GetGlobal_s32)
 {
     u32 * global = immediate (u32 *);
-    slot (u32) = * global;                        //  printf ("get global: %p %" PRIi64 "\n", global, *global);
+    slot (u32) = * global;                        //  arduino_printf ("get global: %p %" PRIi64 "\n", global, *global);
 
     nextOp ();
 }
@@ -502,7 +502,7 @@ d_m3Op  (GetGlobal_s32)
 d_m3Op  (GetGlobal_s64)
 {
     u64 * global = immediate (u64 *);
-    slot (u64) = * global;                        // printf ("get global: %p %" PRIi64 "\n", global, *global);
+    slot (u64) = * global;                        // arduino_printf ("get global: %p %" PRIi64 "\n", global, *global);
 
     nextOp ();
 }
@@ -511,7 +511,7 @@ d_m3Op  (GetGlobal_s64)
 d_m3Op  (SetGlobal_i32)
 {
     u32 * global = immediate (u32 *);
-    * global = (u32) _r0;                         //  printf ("set global: %p %" PRIi64 "\n", global, _r0);
+    * global = (u32) _r0;                         //  arduino_printf ("set global: %p %" PRIi64 "\n", global, _r0);
 
     nextOp ();
 }
@@ -520,7 +520,7 @@ d_m3Op  (SetGlobal_i32)
 d_m3Op  (SetGlobal_i64)
 {
     u64 * global = immediate (u64 *);
-    * global = (u64) _r0;                         //  printf ("set global: %p %" PRIi64 "\n", global, _r0);
+    * global = (u64) _r0;                         //  arduino_printf ("set global: %p %" PRIi64 "\n", global, _r0);
 
     nextOp ();
 }
@@ -613,12 +613,12 @@ d_m3Op  (CallRawFunction)
 #if d_m3EnableStrace
     IM3FuncType ftype = ctx.function->funcType;
 
-    FILE* out = stderr;
-    char outbuff[1024];
-    char* outp = outbuff;
-    char* oute = outbuff+1024;
+    // FILE* out = stderr;
+    // char outbuff[1024];
+    // char* outp = outbuff;
+    // char* oute = outbuff+1024;
 
-    outp += snprintf(outp, oute-outp, "%s!%s(", ctx.function->import.moduleUtf8, ctx.function->import.fieldUtf8);
+    arduino_printf("%s!%s(", ctx.function->import.moduleUtf8, ctx.function->import.fieldUtf8);
 
     const int nArgs = ftype->numArgs;
     const int nRets = ftype->numRets;
@@ -626,16 +626,16 @@ d_m3Op  (CallRawFunction)
     for (int i=0; i<nArgs; i++) {
         const int type = ftype->types[nRets + i];
         switch (type) {
-        case c_m3Type_i32:  outp += snprintf(outp, oute-outp, "%" PRIi32, *(i32*)(args+i)); break;
-        case c_m3Type_i64:  outp += snprintf(outp, oute-outp, "%" PRIi64, *(i64*)(args+i)); break;
-        case c_m3Type_f32:  outp += snprintf(outp, oute-outp, "%" PRIf32, *(f32*)(args+i)); break;
-        case c_m3Type_f64:  outp += snprintf(outp, oute-outp, "%" PRIf64, *(f64*)(args+i)); break;
-        default:            outp += snprintf(outp, oute-outp, "<type %d>", type);         break;
+        case c_m3Type_i32:  arduino_printf("<type %d>: %" PRIi32, type, *(i32*)(args+i)); break;
+        case c_m3Type_i64:  arduino_printf("<type %d>: %" PRIi64, type, *(i64*)(args+i)); break;
+        case c_m3Type_f32:  arduino_printf("<type %d>: %" PRIf32, type, *(f32*)(args+i)); break;
+        case c_m3Type_f64:  arduino_printf("<type %d>: %" PRIf64, type, *(f64*)(args+i)); break;
+        default:            arduino_printf("<type %d>", type);         break;
         }
-        outp += snprintf(outp, oute-outp, (i < nArgs-1) ? ", " : ")");
+        arduino_printf((i < nArgs-1) ? ", " : ")");
     }
 # if d_m3EnableStrace >= 2
-    outp += snprintf(outp, oute-outp, " { <native> }");
+    arduino_printf(" { <native> }\n");
 # endif
 #endif
 
@@ -649,14 +649,14 @@ d_m3Op  (CallRawFunction)
 
 #if d_m3EnableStrace
     if (UNLIKELY(possible_trap)) {
-        d_m3TracePrint("%s -> %s", outbuff, (char*)possible_trap);
+        d_m3TracePrint(" -> %s", (char*)possible_trap);
     } else {
         switch (GetSingleRetType(ftype)) {
-        case c_m3Type_none: d_m3TracePrint("%s", outbuff); break;
-        case c_m3Type_i32:  d_m3TracePrint("%s = %" PRIi32, outbuff, *(i32*)sp); break;
-        case c_m3Type_i64:  d_m3TracePrint("%s = %" PRIi64, outbuff, *(i64*)sp); break;
-        case c_m3Type_f32:  d_m3TracePrint("%s = %" PRIf32, outbuff, *(f32*)sp); break;
-        case c_m3Type_f64:  d_m3TracePrint("%s = %" PRIf64, outbuff, *(f64*)sp); break;
+        case c_m3Type_none: /*d_m3TracePrint("%s", outbuff); */break;
+        case c_m3Type_i32:  d_m3TracePrint("= %" PRIi32, *(i32*)sp); break;
+        case c_m3Type_i64:  d_m3TracePrint("= %" PRIi64, *(i64*)sp); break;
+        case c_m3Type_f32:  d_m3TracePrint("= %" PRIf32, *(f32*)sp); break;
+        case c_m3Type_f64:  d_m3TracePrint("= %" PRIf64, *(f64*)sp); break;
         }
     }
 #endif
@@ -971,7 +971,7 @@ d_m3Op (CopySlot_64)
     u64 * dst = slot_ptr (u64);
     u64 * src = slot_ptr (u64);
 
-    * dst = * src;                  // printf ("copy: %p <- %" PRIi64 " <- %p\n", dst, * dst, src);
+    * dst = * src;                  // arduino_printf ("copy: %p <- %" PRIi64 " <- %p\n", dst, * dst, src);
 
     nextOp ();
 }
@@ -1000,10 +1000,10 @@ d_m3Op  (DumpStack)
 
     cstr_t funcName = (function) ? m3_GetFunctionName(function) : "";
 
-    printf (" %4d ", opcodeIndex);
-    printf (" %-25s     r0: 0x%016" PRIx64 "  i:%" PRIi64 "  u:%" PRIu64 "\n", funcName, _r0, _r0, _r0);
+    arduino_printf (" %4d ", opcodeIndex);
+    arduino_printf (" %-25s     r0: 0x%016" PRIx64 "  i:%" PRIi64 "  u:%" PRIu64 "\n", funcName, _r0, _r0, _r0);
 #if d_m3HasFloat
-    printf ("                                    fp0: %" PRIf64 "\n", _fp0);
+    arduino_printf ("                                    fp0: %" PRIf64 "\n", _fp0);
 #endif
     m3stack_t sp = _sp;
 
@@ -1011,11 +1011,11 @@ d_m3Op  (DumpStack)
     {
         cstr_t kind = "";
 
-        printf ("%p  %5s  %2d: 0x%" PRIx64 "  i:%" PRIi64 "\n", sp, kind, i, (u64) *(sp), (i64) *(sp));
+        arduino_printf ("%p  %5s  %2d: 0x%" PRIx64 "  i:%" PRIi64 "\n", sp, kind, i, (u64) *(sp), (i64) *(sp));
 
         ++sp;
     }
-    printf ("---------------------------------------------------------------------------------------------------------\n");
+    arduino_printf ("---------------------------------------------------------------------------------------------------------\n");
 
     nextOpDirect();
 }
@@ -1328,7 +1328,7 @@ d_m3Op(DEST_TYPE##_Load_##SRC_TYPE##_s)                 \
     } else d_outOfBounds;                               \
 }
 
-//  printf ("get: %d -> %d\n", operand + offset, (i64) REG);
+//  arduino_printf ("get: %d -> %d\n", operand + offset, (i64) REG);
 
 
 #define d_m3Load_i(DEST_TYPE, SRC_TYPE) d_m3Load(_r0, DEST_TYPE, SRC_TYPE)

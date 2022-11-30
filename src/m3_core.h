@@ -74,7 +74,7 @@ const void * const  cvptr_t;
 
 # if defined (DEBUG)
 
-#   define d_m3Log(CATEGORY, FMT, ...)                  printf (" %8s  |  " FMT, #CATEGORY, ##__VA_ARGS__);
+#   define d_m3Log(CATEGORY, FMT, ...)                  arduino_printf (" %8s  |  " FMT, #CATEGORY, ##__VA_ARGS__);
 
 #   if d_m3LogParse
 #       define m3log_parse(CATEGORY, FMT, ...)          d_m3Log(CATEGORY, FMT, ##__VA_ARGS__)
@@ -120,7 +120,7 @@ const void * const  cvptr_t;
 
 
 # if defined(ASSERTS) || (defined(DEBUG) && !defined(NASSERTS))
-#   define d_m3Assert(ASS)  if (!(ASS)) { printf("Assertion failed at %s:%d : %s\n", __FILE__, __LINE__, #ASS); abort(); }
+#   define d_m3Assert(ASS)  if (!(ASS)) { arduino_printf("Assertion failed at %s:%d : %s\n", __FILE__, __LINE__, #ASS); abort(); }
 # else
 #   define d_m3Assert(ASS)
 # endif

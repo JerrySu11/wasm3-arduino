@@ -16,7 +16,7 @@
 // a central function you can be breakpoint:
 void ExceptionBreakpoint (cstr_t i_exception, cstr_t i_message)
 {
-    printf ("\nexception: '%s' @ %s\n", i_exception, i_message);
+    arduino_printf ("\nexception: '%s' @ %s\n", i_exception, i_message);
     return;
 }
 
@@ -30,18 +30,18 @@ OpInfo;
 
 void  m3_PrintM3Info  ()
 {
-    printf ("\n-- m3 configuration --------------------------------------------\n");
-//  printf (" sizeof M3CodePage    : %zu bytes  (%d slots) \n", sizeof (M3CodePage), c_m3CodePageNumSlots);
-    printf (" sizeof M3MemPage     : %u bytes              \n", d_m3MemPageSize);
-    printf (" sizeof M3Compilation : %zu bytes             \n", sizeof (M3Compilation));
-    printf (" sizeof M3Function    : %zu bytes             \n", sizeof (M3Function));
-    printf ("----------------------------------------------------------------\n\n");
+    arduino_printf ("\n-- m3 configuration --------------------------------------------\n");
+//  arduino_printf (" sizeof M3CodePage    : %zu bytes  (%d slots) \n", sizeof (M3CodePage), c_m3CodePageNumSlots);
+    arduino_printf (" sizeof M3MemPage     : %u bytes              \n", d_m3MemPageSize);
+    arduino_printf (" sizeof M3Compilation : %zu bytes             \n", sizeof (M3Compilation));
+    arduino_printf (" sizeof M3Function    : %zu bytes             \n", sizeof (M3Function));
+    arduino_printf ("----------------------------------------------------------------\n\n");
 }
 
 
 void *  v_PrintEnvModuleInfo  (IM3Module i_module, u32 * io_index)
 {
-    printf (" module [%u]  name: '%s'; funcs: %d  \n", * io_index++, i_module->name, i_module->numFunctions);
+    arduino_printf (" module [%u]  name: '%s'; funcs: %d  \n", * io_index++, i_module->name, i_module->numFunctions);
 
     return NULL;
 }
@@ -49,14 +49,14 @@ void *  v_PrintEnvModuleInfo  (IM3Module i_module, u32 * io_index)
 
 void  m3_PrintRuntimeInfo  (IM3Runtime i_runtime)
 {
-    printf ("\n-- m3 runtime -------------------------------------------------\n");
+    arduino_printf ("\n-- m3 runtime -------------------------------------------------\n");
 
-    printf (" stack-size: %zu   \n\n", i_runtime->numStackSlots * sizeof (m3slot_t));
+    arduino_printf (" stack-size: %zu   \n\n", i_runtime->numStackSlots * sizeof (m3slot_t));
 
     u32 moduleIndex = 0;
     ForEachModule (i_runtime, (ModuleVisitor) v_PrintEnvModuleInfo, & moduleIndex);
 
-    printf ("----------------------------------------------------------------\n\n");
+    arduino_printf ("----------------------------------------------------------------\n\n");
 }
 
 
@@ -164,7 +164,7 @@ cstr_t  SPrintFunctionArgList  (IM3Function i_function, m3stack_t i_sp)
             }
         }
     }
-    else printf ("null signature");
+    else arduino_printf ("null signature");
 
     ret = snprintf (s, e-s, ")");
     s += M3_MAX (0, ret);
@@ -351,8 +351,8 @@ void  dump_type_stack  (IM3Compilation o)
     // display whether r0 or fp0 is allocated. these should then also be reflected somewhere in the stack too.
     d_m3Log(stack, "\n");
     d_m3Log(stack, "        ");
-    printf ("%s %s    ", regAllocated [0] ? "(r0)" : "    ", regAllocated [1] ? "(fp0)" : "     ");
-    printf("\n");
+    arduino_printf ("%s %s    ", regAllocated [0] ? "(r0)" : "    ", regAllocated [1] ? "(fp0)" : "     ");
+    arduino_printf("\n");
 
     for (u32 p = 1; p <= 2; ++p)
     {
@@ -361,10 +361,10 @@ void  dump_type_stack  (IM3Compilation o)
         for (u32 i = 0; i < o->stackIndex; ++i)
         {
             if (i > 0 and i == o->stackFirstDynamicIndex)
-                printf ("#");
+                arduino_printf ("#");
 
             if (i == o->block.blockStackIndex)
-                printf (">");
+                arduino_printf (">");
 
             const char * type = c_waCompactTypes [o->typeStack [i]];
 
@@ -410,10 +410,10 @@ void  dump_type_stack  (IM3Compilation o)
                     strcat (item, " ");
             }
 
-            printf ("|%s ", item);
+            arduino_printf ("|%s ", item);
 
         }
-        printf ("\n");
+        arduino_printf ("\n");
     }
 
 //    for (u32 r = 0; r < 2; ++r)
@@ -426,23 +426,23 @@ void  dump_type_stack  (IM3Compilation o)
         d_m3Log (stack, "                      -");
 
         for (u16 i = o->slotFirstDynamicIndex; i < maxSlot; ++i)
-            printf ("----");
+            arduino_printf ("----");
 
-        printf ("\n");
+        arduino_printf ("\n");
 
         d_m3Log (stack, "                 slot |");
         for (u16 i = o->slotFirstDynamicIndex; i < maxSlot; ++i)
-            printf ("%3d|", i);
+            arduino_printf ("%3d|", i);
 
-        printf ("\n");
+        arduino_printf ("\n");
         d_m3Log (stack, "                alloc |");
 
         for (u16 i = o->slotFirstDynamicIndex; i < maxSlot; ++i)
         {
-            printf ("%3d|", o->m3Slots [i]);
+            arduino_printf ("%3d|", o->m3Slots [i]);
         }
 
-        printf ("\n");
+        arduino_printf ("\n");
     }
     d_m3Log(stack, "\n");
 }
@@ -504,9 +504,9 @@ void  log_emit  (IM3Compilation o, IM3Operation i_operation)
     d_m3Log(emit, "");
     if (i.info)
     {
-        printf ("%p: %s\n", GetPC (o),  i.info->name);
+        arduino_printf ("%p: %s\n", GetPC (o),  i.info->name);
     }
-    else printf ("not found: %p\n", i_operation);
+    else arduino_printf ("not found: %p\n", i_operation);
 }
 
 #endif // DEBUG

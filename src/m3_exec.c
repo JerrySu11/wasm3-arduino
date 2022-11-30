@@ -20,11 +20,13 @@ void  ProfileHit  (cstr_t i_operationName)
 
     M3ProfilerSlot * slot = & s_opProfilerCounts [ptr & d_m3ProfilerSlotMask];
 
+    arduino_printf ("Called op code: %s\n", slot->opName);
+
     if (slot->opName)
     {
         if (slot->opName != i_operationName)
-        {
-            m3_Abort ("profiler slot collision; increase d_m3ProfilerSlotMask");
+        {   
+            // m3_Abort ("profiler slot collision; increase d_m3ProfilerSlotMask");
         }
     }
 
@@ -55,7 +57,10 @@ void  m3_PrintProfilerInfo  ()
 
         if (maxSlot->opName)
         {
-            fprintf (stderr, "%13llu  %s\n", maxSlot->hitCount, maxSlot->opName);
+            // fprintf (stderr, "%13llu  %s\n", maxSlot->hitCount, maxSlot->opName);
+            char str[256];
+            sprintf (str, "%13llu  %s\n", maxSlot->hitCount, maxSlot->opName);
+            print_buffer(str);
             maxSlot->opName = NULL;
         }
     }
